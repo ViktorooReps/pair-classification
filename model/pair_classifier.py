@@ -26,7 +26,7 @@ class PairClassifier(SerializableModel):
         super().__init__()
         self._encoder = TextEncoder(bert_model)
 
-        input_size = 2 * self._encoder.hidden_size
+        # input_size = 2 * self._encoder.hidden_size
         # self._head = Sequential(
         #     LayerNorm(input_size),
         #     Dropout(dropout),
@@ -43,6 +43,7 @@ class PairClassifier(SerializableModel):
         #     Linear(input_size // 16, 2),
         # )
 
+        input_size = self._encoder.hidden_size
         self._head = Sequential(
             Dropout(dropout),
             Linear(input_size, 2)
