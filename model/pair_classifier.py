@@ -57,11 +57,11 @@ class PairClassifier(SerializableModel):
             Linear(input_size // 16, 2),
         )
 
-        input_size = self._encoder.hidden_size
-        self._head = Sequential(
-            Dropout(dropout),
-            Linear(input_size, 2)
-        )
+        # input_size = self._encoder.hidden_size
+        # self._head = Sequential(
+        #     Dropout(dropout),
+        #     Linear(input_size, 2)
+        # )
 
     @classmethod
     def from_args(cls: _Model, args: ModelArguments) -> _Model:
