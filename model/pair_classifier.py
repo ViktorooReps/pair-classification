@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass, field
 from typing import Union, Tuple, List, Optional, Iterable, Dict, TypeVar
 
@@ -43,25 +44,16 @@ class PairClassifier(SerializableModel):
         #     Linear(input_size // 16, 2),
         # )
 
-        input_size = 2 * self._encoder.hidden_size
+        input_size = 4 * self._encoder.hidden_size
+        hidden = int(math.sqrt(input_size))
         self._head = Sequential(
             Dropout(dropout),
-            Linear(input_size, input_size // 4),
+            Linear(input_size, hidden),
             ReLU(),
 
             Dropout(dropout),
-            Linear(input_size // 4, input_size // 16),
-            ReLU(),
-
-            Dropout(dropout),
-            Linear(input_size // 16, 2),
+            Linear(hidden, 2),
         )
-
-        # input_size = self._encoder.hidden_size
-        # self._head = Sequential(
-        #     Dropout(dropout),
-        #     Linear(input_size, 2)
-        # )
 
     @classmethod
     def from_args(cls: _Model, args: ModelArguments) -> _Model:
@@ -79,7 +71,9 @@ class PairClassifier(SerializableModel):
         }
 
     def head_forward(self, base_representation: Tensor, compare_representation: Tensor) -> Tensor:
-        concat_representations = torch.concat([base_representation, compare_representation], dim=-1)  # (BATCH, 2 * HIDDEN)
+        sq_diff = (base_representation - compare_representation) ** 2
+        mult = base_representation * compare_representation
+        concat_representations = torch.concat([base_representation, compare_representation, sq_diff, mult], dim=-1)  # (BATCH, 4 * HIDDEN)
         # return self._head(base_representation - compare_representation)
         return self._head(concat_representations)
 
