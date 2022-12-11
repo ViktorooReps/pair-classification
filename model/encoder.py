@@ -22,6 +22,7 @@ class TextEncoder(SerializableModel):
             texts,
             return_tensors='pt',
             truncation=True,
+            padding=True,
             max_length=self._bert_encoder.config.max_length,
             add_special_tokens=True
         )
