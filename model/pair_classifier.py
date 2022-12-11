@@ -27,20 +27,25 @@ class PairClassifier(SerializableModel):
         self._encoder = TextEncoder(bert_model)
 
         input_size = 2 * self._encoder.hidden_size
+        # self._head = Sequential(
+        #     LayerNorm(input_size),
+        #     Dropout(dropout),
+        #     Linear(input_size, input_size // 4),
+        #     ReLU(),
+        #
+        #     LayerNorm(input_size // 4),
+        #     Dropout(),
+        #     Linear(input_size // 4, input_size // 16),
+        #     ReLU(),
+        #
+        #     LayerNorm(input_size // 16),
+        #     Dropout(),
+        #     Linear(input_size // 16, 2),
+        # )
+
         self._head = Sequential(
-            LayerNorm(input_size),
             Dropout(dropout),
-            Linear(input_size, input_size // 4),
-            ReLU(),
-
-            LayerNorm(input_size // 4),
-            Dropout(),
-            Linear(input_size // 4, input_size // 16),
-            ReLU(),
-
-            LayerNorm(input_size // 16),
-            Dropout(),
-            Linear(input_size // 16, 2),
+            Linear(input_size, 2)
         )
 
     @classmethod
@@ -59,8 +64,8 @@ class PairClassifier(SerializableModel):
         }
 
     def head_forward(self, base_representation: Tensor, compare_representation: Tensor) -> Tensor:
-        concat_representations = torch.concat([base_representation, compare_representation], dim=-1)  # (BATCH, 2 * HIDDEN)
-        return self._head(concat_representations)
+        # concat_representations = torch.concat([base_representation, compare_representation], dim=-1)  # (BATCH, 2 * HIDDEN)
+        return self._head(base_representation - compare_representation)
 
     def encode(self, tokenized_texts: LongTensor) -> Tensor:
         return self._encoder(tokenized_texts)
