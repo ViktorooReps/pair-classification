@@ -9,7 +9,7 @@ from transformers import BatchEncoding
 
 class PairDataset(Dataset[Tuple[LongTensor, int]]):
 
-    def __init__(self, examples: LongTensor, clusters: List[int], negative_samples: float = 5.0):
+    def __init__(self, examples: LongTensor, clusters: List[int], negative_samples: float = 1.0):
         self._examples = examples
         self._clusters = clusters
 
