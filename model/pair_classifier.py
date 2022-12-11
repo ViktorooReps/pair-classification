@@ -55,7 +55,7 @@ class PairClassifier(SerializableModel):
         pairs, labels = zip(*examples)
         return {
             'pairs': torch.stack(pairs).long(),
-            'labels': torch.stack(labels).long()
+            'labels': torch.tensor(labels, dtype=torch.long).long()
         }
 
     def head_forward(self, base_representation: Tensor, compare_representation: Tensor) -> Tensor:
