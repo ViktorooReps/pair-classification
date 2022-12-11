@@ -43,6 +43,20 @@ class PairClassifier(SerializableModel):
         #     Linear(input_size // 16, 2),
         # )
 
+        input_size = 2 * self._encoder.hidden_size
+        self._head = Sequential(
+            Dropout(dropout),
+            Linear(input_size, input_size // 4),
+            ReLU(),
+
+            Dropout(),
+            Linear(input_size // 4, input_size // 16),
+            ReLU(),
+
+            Dropout(),
+            Linear(input_size // 16, 2),
+        )
+
         input_size = self._encoder.hidden_size
         self._head = Sequential(
             Dropout(dropout),
@@ -65,8 +79,9 @@ class PairClassifier(SerializableModel):
         }
 
     def head_forward(self, base_representation: Tensor, compare_representation: Tensor) -> Tensor:
-        # concat_representations = torch.concat([base_representation, compare_representation], dim=-1)  # (BATCH, 2 * HIDDEN)
-        return self._head(base_representation - compare_representation)
+        concat_representations = torch.concat([base_representation, compare_representation], dim=-1)  # (BATCH, 2 * HIDDEN)
+        # return self._head(base_representation - compare_representation)
+        return self._head(concat_representations)
 
     def encode(self, tokenized_texts: LongTensor) -> Tensor:
         return self._encoder(tokenized_texts)
