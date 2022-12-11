@@ -4,7 +4,7 @@ from copy import deepcopy
 from itertools import chain, starmap
 from os import cpu_count, environ
 from pathlib import Path
-from typing import Dict, List, Set, TypeVar, Optional, Iterable, Tuple
+from typing import Dict, List, TypeVar, Optional, Iterable, Tuple
 
 import numpy as np
 import torch

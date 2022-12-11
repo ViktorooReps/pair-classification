@@ -13,7 +13,7 @@ from model.serializable import SerializableModel
 @dataclass
 class ModelArguments:
     bert_model: str = field(metadata={'help': 'BERT encoder'})
-    dropout: str = field(metadata={'help': 'Dropout rate'})
+    dropout: float = field(metadata={'help': 'Dropout rate'})
     save_path: str = field(metadata={'help': 'Path to saved model'})
 
 
