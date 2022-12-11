@@ -18,8 +18,8 @@ def compute_metrics(evaluation_results: EvalPrediction) -> Dict[str, float]:
     y_true = evaluation_results.label_ids
     y_pred = np.argmax(evaluation_results.predictions, axis=-1)
 
-    precision_scores = precision_score(y_true, y_pred, average='none')
-    recall_scores = recall_score(y_true, y_pred, average='none')
+    precision_scores = precision_score(y_true, y_pred, average=None)
+    recall_scores = recall_score(y_true, y_pred, average=None)
     return {
         'precision_0': precision_scores[0],
         'precision_1': precision_scores[1],
