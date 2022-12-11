@@ -45,7 +45,7 @@ def get_train_datasets(tokenizer: Callable[[List[str]], BatchEncoding], *, split
     train_data, dev_data = input_ids[:train_elements], input_ids[train_elements:]
     train_labels, dev_labels = labels[:train_elements], labels[train_elements:]
 
-    return PairDataset(train_data, train_labels), PairDataset(dev_data, dev_labels)
+    return PairDataset(train_data, list(map(int, train_labels))), PairDataset(dev_data, list(map(int, dev_labels)))
 
 
 def get_test_iterator() -> List[List[str]]:
