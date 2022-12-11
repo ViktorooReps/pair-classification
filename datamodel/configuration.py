@@ -9,21 +9,30 @@ from transformers import BatchEncoding
 
 class PairDataset(Dataset[Tuple[LongTensor, int]]):
 
-    def __init__(self, examples: LongTensor, clusters: List[int]):
+    def __init__(self, examples: LongTensor, clusters: List[int], negative_samples: float = 2.0):
         self._examples = examples
         self._clusters = clusters
 
         total_examples = len(clusters)
 
         clusters = torch.tensor(clusters)
-        self._same_cluster = (clusters.view(1, total_examples) == clusters.view(total_examples, 1)).view(-1)
+        same_cluster = (clusters.view(1, total_examples) == clusters.view(total_examples, 1)).view(-1)
+        chosen_idx = torch.clone(same_cluster)
+
+        # add some negative examples
+        num_negative = int(same_cluster.sum() * negative_samples)
+        negative_idxes = torch.randperm(len(same_cluster))[:num_negative]
+
+        chosen_idx[negative_idxes] = True
+
         self._example_idxes = torch.concat(
             [
                 torch.arange(total_examples).view(1, total_examples).repeat(total_examples, 1),
                 torch.arange(total_examples).view(total_examples, 1).repeat(1, total_examples)
             ],
             dim=-1
-        ).view(-1, 2)
+        ).view(-1, 2)[chosen_idx]
+        self._same_cluster = same_cluster[chosen_idx]
 
     def __getitem__(self, index) -> Tuple[LongTensor, int]:
         return self._examples[self._example_idxes[index]], int(self._same_cluster[index].item())
