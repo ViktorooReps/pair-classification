@@ -1,6 +1,6 @@
 from typing import List
 
-from torch import Tensor
+from torch import Tensor, LongTensor
 from transformers import AutoTokenizer, AutoModel, BatchEncoding, PreTrainedModel, PreTrainedTokenizer
 
 from model.serializable import SerializableModel
@@ -27,5 +27,5 @@ class TextEncoder(SerializableModel):
             add_special_tokens=True
         )
 
-    def forward(self, encoding: BatchEncoding) -> Tensor:
-        return self._bert_encoder(**encoding.to(self.device)).last_hidden_state[:, 0]  # select [CLS] token representation
+    def forward(self, input_ids: LongTensor) -> Tensor:
+        return self._bert_encoder(input_ids).last_hidden_state[:, 0]  # select [CLS] token representation
