@@ -49,11 +49,11 @@ class PairClassifier(SerializableModel):
             Linear(input_size, input_size // 4),
             ReLU(),
 
-            Dropout(),
+            Dropout(dropout),
             Linear(input_size // 4, input_size // 16),
             ReLU(),
 
-            Dropout(),
+            Dropout(dropout),
             Linear(input_size // 16, 2),
         )
 
